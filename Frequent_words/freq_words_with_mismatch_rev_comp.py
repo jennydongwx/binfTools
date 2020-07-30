@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
+import sys
 
 def ReverseComplement(pattern):
     nuc_dict = {'A':'T', 'C':'G', 'T': 'A', 'G': 'C'}
@@ -12,9 +8,8 @@ def ReverseComplement(pattern):
         rev.append(rev_letter)
     return ''.join(reversed(rev))
 
-# In[2]:
 
-
+# Helper function: frequent array conversion
 def SymbolToNumber(symbol):
     nuc_dict = {'A': 0, 'C': '1', 'G':2, 'T':3}
     return int(nuc_dict[symbol])
@@ -26,11 +21,21 @@ def PatternToNumber(pattern):
     prefix = pattern[:-1]
     return PatternToNumber(prefix) * 4 + SymbolToNumber(symbol)
 
+def NumberToSymbol(i):
+    nuc_dict = {0:'A', 1: 'C', 2:'G', 3: 'T'}
+    return nuc_dict[i]
+
+def NumberToPattern(i,k):
+    if k == 1:
+        return NumberToSymbol(i)
+    prefix_idx = int(i / 4)
+    r = int(i % 4)
+    symbol = NumberToSymbol(r)
+    prefix_pattern = NumberToPattern(prefix_idx, k-1)
+    return prefix_pattern + symbol
 
 
-# In[74]:
-
-
+# Helper function: compute mismatches
 def HammingDistance(A,B):
     count = 0
     for i in range(len(A)):
@@ -58,23 +63,6 @@ def DNeighbors(pattern, d):
             
     return neighborhood
 
-# In[4]:
-
-
-def NumberToSymbol(i):
-    nuc_dict = {0:'A', 1: 'C', 2:'G', 3: 'T'}
-    return nuc_dict[i]
-
-def NumberToPattern(i,k):
-    if k == 1:
-        return NumberToSymbol(i)
-    prefix_idx = int(i / 4)
-    r = int(i % 4)
-    symbol = NumberToSymbol(r)
-    prefix_pattern = NumberToPattern(prefix_idx, k-1)
-    return prefix_pattern + symbol
-
-# In[77]:
 
 
 def Freq_Array_Mismatch(text, k, d):
@@ -90,8 +78,6 @@ def Freq_Array_Mismatch(text, k, d):
             freq_array[j] += 1
     
     return freq_array
-
-# In[116]:
 
 
 def Freq_Words_Mismatch_Rev_Comp(text, k, d):
@@ -110,31 +96,38 @@ def Freq_Words_Mismatch_Rev_Comp(text, k, d):
 
     return freq_pattern
 
-# In[112]:
+def read_input(input_filename):
+    with open(input_filename) as file:
+        k = int(file.readline().strip())
+        d = int(file.readline().strip())
+        text = file.readline().strip()
+    return k,d,text
+
+def format_output(freq_words):
+    # write to output_file anyways
+    out_filename = 'output.txt'
+    with open(out_filename, 'w') as out_file:
+        out = ''
+        for i in range(len(freq_words)):
+            new_word = list(freq_words)[i] + ' '
+            out += new_word
+            out_file.write(new_word)
+
+    # If there are fewer than 50 words, print to console as well
+    if(len(freq_words) < 50):
+        print(out)
+
+def main():
+    input_filename = sys.argv[1]
+    k,d,text = read_input(input_filename)
+    freq_pattern = Freq_Words_Mismatch_Rev_Comp(text, k, d)
+    output = format_output(freq_pattern)
 
 
-text = 'ACGTTGCATGTCGCATGATGCATGAGAGCT'
 
-# In[113]:
+if __name__ == "__main__":
+    main()
 
-
-k = 7
-
-# In[114]:
-
-
-d = 3
-
-# In[117]:
-
-
-freq_words = Freq_Words_Mismatch_Rev_Comp(text,k,d)
-out = ''
-for i in range(len(freq_words)):
-    out += list(freq_words)[i] + ' '
-out
-
-# In[ ]:
 
 
 
