@@ -1,3 +1,4 @@
+# File for helper functions
 # Motifs is a t x k motif matrix, where we select a k-mer from each length-n string of the total t DNA strings.
 
 
@@ -47,3 +48,33 @@ def Score(motifs):
     for col in freq:
         score += sum(col) - max(col)
     return score
+
+def read_input(input_filename):
+    ''' helper function for reading input '''
+    DNA = []
+    with open(input_filename) as file:
+        k = int(file.readline().strip())
+        t = int(file.readline().strip())
+        for line in file:
+            DNA.append(line.strip())
+    return k,t,DNA
+
+def format_output(freq_words, alg_type):
+    ''' helper function for output formatting'''
+    # create output file name depending on the algorithm
+    if alg_type == 'g':
+        out_filename = 'output_greedy.txt'
+    elif alg_type == 'r':
+        out_filename = 'output_random.txt'
+    else:
+        out_filename = 'output.txt'
+    with open(out_filename, 'w') as out_file:
+        out = ''
+        for i in range(len(freq_words)):
+            new_word = list(freq_words)[i] + ' '
+            out += new_word
+            out_file.write(new_word)
+
+    # If there are fewer than 50 words, print to console as well
+    if(len(freq_words) < 50):
+        print(out)
